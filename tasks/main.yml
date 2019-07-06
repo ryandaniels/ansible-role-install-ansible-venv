@@ -1,0 +1,48 @@
+---
+- name: install-ansiblev | Ensure basic packages are installed
+  package:
+    name: "{{ item }}"
+    state: present
+  environment: "{{ proxy_env }}"
+  with_items:
+    - python-pip
+    - python-virtualenv
+    - git
+
+- name: install-ansiblev | Ensure ansible versions are available in virtualenv
+  pip:
+    name: ansible
+    virtualenv: "{{ install_ansiblev_virtualenv_basepath }}/ansible-{{ item }}"
+    version: "{{ item }}"
+  environment: "{{ proxy_env }}"
+  with_items: "{{ install_ansiblev_versions_add }}"
+  when: install_ansiblev_proxy_enabled|bool
+
+- name: install-ansiblev | Ensure ansible versions are available in virtualenv (no proxy)
+  pip:
+    name: ansible
+    virtualenv: "{{ install_ansiblev_virtualenv_basepath }}/ansible-{{ item }}"
+    version: "{{ item }}"
+  with_items: "{{ install_ansiblev_versions_add }}"
+  when: not install_ansiblev_proxy_enabled|bool
+
+#This only removed the named application from the venv. Not needed, just rm the dir.
+# - name: install-ansiblev | Remove old ansible versions from virtualenv path
+#   pip:
+#     name: ansible
+#     state: absent
+#     virtualenv: "{{ install_ansiblev_virtualenv_basepath }}/ansible-{{ item }}"
+#     version: "{{ item }}"
+#   ignore_errors: true
+#   with_items: "{{ install_ansiblev_versions_remove }}"
+
+- name: install-ansiblev | Remove old ansible versions from virtualenv path
+  file:
+    state: absent
+    path: "{{ install_ansiblev_virtualenv_basepath }}/ansible-{{ item }}"
+  with_items: "{{ install_ansiblev_versions_remove }}"
+
+- name: install-ansiblev | Ensure system wide activation aliases are available
+  copy:
+    dest: /etc/profile.d/ansible_virtualenvs.sh
+    content: "{% for i in install_ansiblev_versions_add %}alias ansible-activate-{{ i }}='source {{ install_ansiblev_virtualenv_basepath }}/ansible-{{ i }}/bin/activate'\n{% endfor %}" # noqa 204

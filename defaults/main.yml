@@ -1,0 +1,31 @@
+---
+install_ansiblev_proxy_enabled: true
+install_ansiblev_virtualenv_basepath: /opt/virtualenvs
+#Available versions: https://pypi.org/project/ansible/ from https://github.com/ansible/ansible/releases
+install_ansiblev_versions_add:
+  - "2.3.3"
+  - "2.4.6"
+  - "2.5.15"
+  - "2.6.18"
+  - "2.7.12"
+  - "2.8.2"
+install_ansiblev_versions_remove:
+  - "2.5.12"
+  - "2.5.13"
+  - "2.5.14"
+  - "2.6.11"
+  - "2.6.12"
+  - "2.6.13"
+  - "2.6.14"
+  - "2.6.15"
+  - "2.6.16"
+  - "2.6.17"
+  - "2.7.5"
+  - "2.7.6"
+  - "2.7.7"
+  - "2.7.8"
+  - "2.7.9"
+  - "2.7.10"
+  - "2.7.11"
+  - "2.8.0"
+  - "2.8.1"
